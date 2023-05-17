@@ -1,0 +1,156 @@
+---
+import { getEntryBySlug } from "astro:content";
+import CategoryPill from "./CategoryPill.astro";
+import PostMeta from "./PostMeta.astro";
+import augmentPostData from "../lib/augmentPostData";
+
+const slugs = ["avl"];
+const posts = await Promise.all(
+  slugs.map((slug) =>
+    getEntryBySlug("blog", slug).then((post) => augmentPostData(post!))
+  )
+);
+---
+
+<style>
+  .carousel {
+    margin-bottom: 4rem;
+  }
+
+  .carousel-inner {
+    min-width: 100%;
+    overflow: hidden;
+
+    display: flex;
+  }
+
+  .carousel-frame {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 100%;
+  }
+
+  .categories {
+    display: flex;
+  }
+
+  .carousel-frame a:hover {
+    color: var(--purple);
+  }
+  .carousel-frame h1 {
+    font-size: var(--display);
+    text-align: center;
+
+    margin: 1.6rem 0;
+  }
+
+  .dots {
+    display: flex;
+    justify-content: center;
+
+    margin-top: 3rem;
+  }
+  .dots > * {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background-color: var(--medium-gray);
+
+    cursor: pointer;
+  }
+
+  .dots > *.active {
+    background-color: var(--purple);
+  }
+
+  .dots > * + * {
+    margin-left: 1.2rem;
+  }
+
+  @media screen and (min-width: 800px) {
+    .carousel {
+      margin-top: 4rem;
+      margin-bottom: 8rem;
+    }
+
+    .dots {
+      margin-top: 4rem;
+    }
+
+    .carousel-frame h1 {
+      margin: 2.4rem 0;
+    }
+  }
+</style>
+<section class="carousel">
+  <div class="carousel-inner" id="carousel-inner">
+    {
+      posts.map((post, index) => (
+        <article class="carousel-frame" id={`carousel-frame-${index + 1}`}>
+          <div class="categories">
+            {post.categories.map((category) => (
+              <CategoryPill name={category} />
+            ))}
+          </div>
+          <a href={`/post/${post.slug}`}>
+            <h1>{post.title}</h1>
+          </a>
+          <PostMeta
+            hideLastEdited
+            rowDisplay
+            title={post.title}
+            lastEditedAt={post.lastEditedAt}
+            publishedAt={post.publishedAt}
+            readingTime={post.readingTime}
+          />
+        </article>
+      ))
+    }
+  </div>
+  <div class="dots" id="dots">
+    {
+      slugs.map((_, index) => (
+        <div
+          role="button"
+          id={`dot-${index + 1}`}
+          class:list={["dot", { active: index === 0 }]}
+          data-index={`${index + 1}`}
+        />
+      ))
+    }
+  </div>
+</section>
+<script>
+  let activeFrame = 1;
+  const carouselInner = document.getElementById("carousel-inner")!;
+  const innerRect = carouselInner.getBoundingClientRect();
+
+  function scrollToFrame(frameIndex: number) {
+    if (frameIndex === activeFrame) return;
+    const carouselFrame = document.getElementById(
+      `carousel-frame-${frameIndex}`
+    )!;
+    const frameRect = carouselFrame.getBoundingClientRect();
+    // Updating the dot
+    const activeDot = document.getElementById(`dot-${activeFrame}`)!;
+    activeDot.classList.remove("active");
+    const newActiveDot = document.getElementById(`dot-${frameIndex}`)!;
+    newActiveDot.classList.add("active");
+    // Scrolling to the correct frame
+    carouselInner.scrollTo({
+      left: (frameIndex - 1) * innerRect.width,
+      behavior: "smooth",
+    });
+    activeFrame = frameIndex;
+  }
+
+  const dots = Array.from(document.getElementsByClassName("dot"));
+  dots.forEach((el) =>
+    el.addEventListener("click", () => scrollToFrame(el.dataset.index))
+  );
+</script>

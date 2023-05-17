@@ -1,0 +1,28 @@
+{
+  "name": "@example/basics",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@fontsource/ia-writer-mono": "^4.5.3",
+    "@fontsource/ia-writer-quattro": "^4.5.3",
+    "@types/node": "^18.11.18",
+    "astro": "^2.0.2",
+    "mdast-util-to-string": "^3.1.1",
+    "reading-time": "^1.5.0",
+    "rehype-katex": "^6.0.2",
+    "rehype-parse": "^8.0.4",
+    "rehype-rewrite": "^3.0.6",
+    "remark-directive": "^2.0.1",
+    "remark-math": "^5.1.1",
+    "remark-parse": "^10.0.1",
+    "unist-util-visit": "^4.1.2"
+  }
+}

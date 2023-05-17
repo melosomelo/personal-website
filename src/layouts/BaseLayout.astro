@@ -1,0 +1,467 @@
+---
+import "@fontsource/ia-writer-quattro";
+import "@fontsource/ia-writer-mono";
+import "@fontsource/ia-writer-quattro/700.css";
+import "@fontsource/ia-writer-mono/700.css";
+interface Props {
+  title: string;
+  description: string;
+}
+
+const links = [
+  { text: "home", path: "/" },
+  { text: "articles", path: "/articles" },
+  { text: "contact", path: "/contact" },
+];
+
+const { title, description } = Astro.props;
+---
+
+<style is:global>
+  :root {
+    /* colors */
+    --highlight: #f5e9ff;
+    --purple: #971ffd;
+    --blue: #5e3dd2;
+    --bg-purple: #1e0d2c;
+    --total-black: #151515;
+    --black: #201f1f;
+    --dark-gray: #656565;
+    --gray: #e6e6e6;
+    --medium-gray: #aeaeae;
+    --white: #f9f9f9;
+    --pure-white: #fff;
+
+    /* font sizes */
+    --pg1: 1.7rem;
+    --pg2: 1.5rem;
+    --pg3: 1.4rem;
+    --pg4: 1.2rem;
+    --display: 3.2rem;
+    --h1: 2.6rem;
+    --h2: 2.2rem;
+    --h3: 1.9rem;
+    --h4: 1.7rem;
+    --h5: 1.5rem;
+    --h6: 1.3rem;
+    font-size: 62.5%;
+  }
+
+  :root.no-scroll {
+    overflow: hidden;
+  }
+
+  *,
+  *::after,
+  *::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body,
+  button,
+  input {
+    font-family: "iA Writer Quattro", sans-serif;
+  }
+
+  body {
+    background-color: var(--pure-white);
+    color: var(--black);
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  a,
+  a:visited {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  html.dark body {
+    background-color: var(--black);
+    color: var(--pure-white);
+  }
+
+  #main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+    max-width: 1300px;
+    padding: 2rem 5%;
+    margin-bottom: 4rem;
+
+    position: relative;
+  }
+
+  #logo {
+    width: 100px;
+    height: 32px;
+  }
+
+  #menu-btn {
+    width: 24px;
+    height: 16px;
+    overflow: hidden;
+
+    position: relative;
+  }
+
+  #menu-btn > * {
+    background-color: var(--black);
+    width: 100%;
+    height: 2px;
+
+    transition: background-color 0.3s, color 0.3s;
+    transition: 0.3s;
+
+    position: absolute;
+  }
+
+  #menu-btn > :first-child {
+    top: 0;
+  }
+
+  #menu-btn > :nth-child(2) {
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+
+  #menu-btn > :last-child {
+    bottom: 0;
+  }
+
+  #main-header.open #menu-btn > :first-child {
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  #main-header.open #menu-btn > :nth-child(2) {
+    transform: translate(100%, -50%);
+  }
+
+  #main-header.open #menu-btn > :last-child {
+    bottom: 50%;
+    transform: translateY(50%) rotate(-45deg);
+  }
+
+  html.dark #menu-btn > * {
+    background-color: var(--pure-white);
+  }
+
+  .mobile-nav {
+    overflow: hidden;
+    width: 100vw;
+    max-height: 0;
+    height: 100vh;
+
+    background-color: red;
+
+    position: absolute;
+    top: 100%;
+    left: 0;
+
+    transition: 0.5s;
+
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--pure-white);
+
+    padding: 0 5%;
+  }
+
+  .desktop-nav {
+    display: none;
+  }
+
+  html.dark .mobile-nav {
+    background-color: var(--black);
+  }
+
+  #main-header.open .mobile-nav {
+    max-height: 100vh;
+    z-index: 999;
+  }
+
+  .mobile-nav a,
+  .desktop-nav a {
+    color: var(--dark-gray);
+    font-family: "iA Writer Mono", monospace;
+  }
+
+  .mobile-nav a {
+    font-size: 1.5rem;
+    font-weight: 700;
+
+    padding: 4rem 0;
+
+    border-bottom: 1px solid #ecedf4;
+  }
+
+  .mobile-nav a.active,
+  .desktop-nav a.active {
+    color: var(--blue);
+  }
+
+  .desktop-nav a.active {
+    font-weight: 700;
+  }
+
+  .desktop-nav a {
+    font-size: 1.6rem;
+  }
+
+  .desktop-nav > * + * {
+    margin-left: 5rem;
+  }
+
+  html.dark .mobile-nav a {
+    border-bottom: 1px solid var(--dark-gray);
+  }
+  .theme-toggler {
+    cursor: pointer;
+
+    width: 24px;
+    height: 24px;
+
+    position: relative;
+    overflow: hidden;
+  }
+
+  .light-icon,
+  .dark-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    transition: 0.4s;
+  }
+
+  .light-icon {
+    transform: translate(100%, -50%);
+  }
+
+  html.dark .light-icon {
+    transform: translate(-50%, -50%);
+  }
+
+  html.dark .dark-icon {
+    transform: translate(-150%, -50%);
+  }
+
+  .theme-toggler svg path {
+    fill: var(--dark-gray);
+  }
+
+  @media screen and (min-width: 800px) {
+    :root {
+      --pg1: 1.9rem;
+      --pg2: 1.7rem;
+      --pg3: 1.5rem;
+      --pg4: 1.3rem;
+
+      --display: 5.2rem;
+      --h1: 4rem;
+      --h2: 3.2rem;
+      --h3: 2.4rem;
+      --h4: 2rem;
+      --h5: 1.6rem;
+      --h6: 1.4rem;
+    }
+
+    #main-header {
+      width: 90%;
+      margin: 0 auto;
+      padding: 3.2rem 0;
+    }
+
+    #menu-btn,
+    .mobile-nav {
+      display: none;
+    }
+
+    .desktop-nav {
+      display: flex;
+    }
+  }
+</style>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="#971ffd" />
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.ico" />
+    <title>mateusmrn | {title.toLowerCase()}</title>
+    <!-- Open Graph -->
+    <!-- Twitter cards -->
+  </head>
+  <body>
+    <script is:inline>
+      // For theme management
+      const theme = (() => {
+        const localStorageValue = localStorage.getItem("mateusmrn-theme");
+        if (typeof localStorage !== undefined && localStorageValue !== null)
+          return localStorageValue;
+
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches)
+          return "dark";
+
+        return "light";
+      })();
+
+      if (theme === "light") {
+        document.documentElement.classList.remove("dark");
+      } else {
+        document.documentElement.classList.add("dark");
+      }
+
+      window.localStorage.setItem("mateusmrn-theme", theme);
+    </script>
+    <header id="main-header">
+      <a href="/">
+        <svg
+          id="logo"
+          width="404"
+          height="137"
+          viewBox="0 0 404 137"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M2.44922 130.323V132.323H4.44922H21.1789H23.1789V130.323V69.0278C24.9141 65.2993 26.5895 62.6225 28.1735 60.8914C29.6474 59.2807 31.3601 58.5255 33.4243 58.5255C35.2274 58.5255 36.4656 59.242 37.3786 60.8426C38.3869 62.6105 39.013 65.52 39.013 69.8304V130.323V132.323H41.013H55.8456H57.8456V130.323V69.0518C59.6902 65.3085 61.3745 62.6016 62.8826 60.8435C64.2281 59.2751 65.8586 58.5255 67.9185 58.5255C69.8011 58.5255 71.0802 59.2623 72.0118 60.8595C73.0402 62.6223 73.6797 65.5244 73.6797 69.8304V130.323V132.323H75.6797H92.4094H94.4094V130.323V68.5886C94.4094 59.6417 92.715 52.4846 89.0451 47.3938C85.4342 42.103 80.2058 39.4467 73.61 39.4467C68.3855 39.4467 63.9631 40.9293 60.536 44.0475L60.5216 44.0607L60.5074 44.0741C58.3984 46.0698 56.4608 48.4854 54.6855 51.3021C53.5056 48.2232 51.9272 45.6748 49.9006 43.7293C46.8945 40.8434 43.0706 39.4467 38.5985 39.4467C33.398 39.4467 28.9884 40.856 25.56 43.8386C23.728 45.4219 22.0821 47.2615 20.6182 49.3483L19.8873 43.3342L19.6736 41.5755H17.9019H4.44922H2.44922V43.5755V130.323ZM111.702 106.948L111.709 106.964L111.715 106.98C114.229 112.889 117.658 117.914 122.015 122.021C126.358 126.117 131.424 129.215 137.19 131.315C142.948 133.413 149.161 134.452 155.811 134.452C162.558 134.452 168.764 133.478 174.409 131.501L174.421 131.497L174.433 131.493C180.089 129.432 185.182 126.877 189.702 123.819L191.201 122.805L190.34 121.212L184.304 110.036L183.292 108.164L181.486 109.29C177.81 111.581 174.092 113.407 170.332 114.774C166.66 115.993 162.573 116.615 158.053 116.615C150.15 116.615 143.581 114.535 138.231 110.466C133.588 106.856 130.608 101.451 129.453 94.0052H191.34H192.989L193.304 92.3869C193.554 91.1004 193.734 89.5955 193.853 87.8862C193.971 86.1785 194.03 84.3579 194.03 82.4257C194.03 76.2064 193.141 70.4842 191.335 65.2798C189.532 59.9655 186.872 55.4035 183.335 51.6325C179.904 47.7331 175.629 44.7306 170.55 42.6161C165.436 40.4871 159.649 39.4467 153.224 39.4467C147.338 39.4467 141.681 40.559 136.269 42.7828C130.851 44.8909 126.031 47.9918 121.822 52.074L121.812 52.0841L121.801 52.0944C117.692 56.197 114.394 61.2068 111.891 67.0894C109.352 72.9368 108.106 79.5399 108.106 86.8606C108.106 94.2872 109.29 100.994 111.702 106.948ZM145.226 58.7801L145.261 58.7686L145.295 58.7559C147.936 57.7779 150.747 57.2837 153.742 57.2837C159.853 57.2837 164.604 59.1413 168.195 62.7301L168.216 62.7506L168.237 62.7705C171.537 65.8816 173.686 70.5594 174.478 77.0551H129.983C130.644 74.3065 131.565 71.8667 132.732 69.7223C134.24 66.9522 136.052 64.6607 138.156 62.821C140.256 60.9851 142.608 59.6416 145.226 58.7801ZM265.746 112.699C263.456 110.512 262.089 106.795 262.089 101.052V4.54785V2.54785H260.089H214.039H212.039V4.54785V18.5623V20.5623H214.039H241.014V99.9881C241.014 110.802 243.553 119.392 248.936 125.443C254.356 131.537 262.153 134.452 271.989 134.452C276.807 134.452 281 134.03 284.537 133.153C288.104 132.296 291.938 131.02 296.034 129.334L297.733 128.635L297.18 126.883L293.041 113.756L292.375 111.643L290.34 112.521C284.742 114.94 279.961 116.083 275.956 116.083C271.646 116.083 268.3 114.908 265.746 112.699ZM316.98 107.125L316.983 107.132L316.986 107.139C319.377 112.919 322.623 117.877 326.734 121.982C330.833 126.074 335.546 129.182 340.862 131.295C346.159 133.4 351.699 134.452 357.467 134.452C363.236 134.452 368.776 133.4 374.073 131.295C379.389 129.182 384.102 126.074 388.201 121.982C392.312 117.877 395.558 112.919 397.949 107.139L397.952 107.132L397.955 107.125C400.366 101.172 401.55 94.4646 401.55 87.038C401.55 79.6114 400.366 72.9044 397.955 66.9507C395.565 61.0523 392.32 56.029 388.201 51.917C384.102 47.8251 379.389 44.7162 374.073 42.6038C368.776 40.4986 363.236 39.4467 357.467 39.4467C351.699 39.4467 346.159 40.4986 340.862 42.6038C335.546 44.7162 330.833 47.8251 326.734 51.917C322.615 56.029 319.37 61.0523 316.98 66.9507C314.569 72.9044 313.385 79.6114 313.385 87.038C313.385 94.4646 314.569 101.172 316.98 107.125ZM373.82 108.348C369.854 113.5 364.478 116.083 357.467 116.083C350.457 116.083 345.081 113.5 341.115 108.348C337.087 103.114 334.977 96.0745 334.977 87.038C334.977 78.0016 337.087 70.9618 341.115 65.7283C345.081 60.5764 350.457 57.9933 357.467 57.9933C364.478 57.9933 369.854 60.5764 373.82 65.7283C377.848 70.9618 379.958 78.0016 379.958 87.038C379.958 96.0745 377.848 103.114 373.82 108.348Z"
+            fill="#971FFD"
+            stroke="#971FFD"
+            stroke-width="4"></path>
+        </svg>
+      </a>
+      <div id="menu-btn" role="button">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <nav class="mobile-nav">
+        {
+          links.map((link) => (
+            <a
+              href={link.path}
+              class:list={
+                Astro.url.pathname === link.path ||
+                Astro.url.pathname === `${link.path}/`
+                  ? "active"
+                  : ""
+              }
+            >
+              {link.text}
+            </a>
+          ))
+        }
+        <div class="theme-toggler" style="margin-top: 2.5rem;" role="button">
+          <svg
+            class="dark-icon"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 18C6.5 18 4.375 17.125 2.625 15.375C0.875 13.625 0 11.5 0 9C0 6.5 0.875 4.375 2.625 2.625C4.375 0.875 6.5 0 9 0C9.23333 0 9.46267 0.00833343 9.688 0.0250001C9.91267 0.0416668 10.1333 0.0666666 10.35 0.0999999C9.66667 0.583333 9.121 1.21233 8.713 1.987C8.30433 2.76233 8.1 3.6 8.1 4.5C8.1 6 8.625 7.275 9.675 8.325C10.725 9.375 12 9.9 13.5 9.9C14.4167 9.9 15.2583 9.69567 16.025 9.287C16.7917 8.879 17.4167 8.33333 17.9 7.65C17.9333 7.86667 17.9583 8.08733 17.975 8.312C17.9917 8.53733 18 8.76667 18 9C18 11.5 17.125 13.625 15.375 15.375C13.625 17.125 11.5 18 9 18ZM9 16C10.4667 16 11.7833 15.596 12.95 14.788C14.1167 13.9793 14.9667 12.925 15.5 11.625C15.1667 11.7083 14.8333 11.775 14.5 11.825C14.1667 11.875 13.8333 11.9 13.5 11.9C11.45 11.9 9.704 11.1793 8.262 9.738C6.82067 8.296 6.1 6.55 6.1 4.5C6.1 4.16667 6.125 3.83333 6.175 3.5C6.225 3.16667 6.29167 2.83333 6.375 2.5C5.075 3.03333 4.021 3.88333 3.213 5.05C2.40433 6.21667 2 7.53333 2 9C2 10.9333 2.68333 12.5833 4.05 13.95C5.41667 15.3167 7.06667 16 9 16Z"
+              fill="white"></path>
+          </svg>
+          <svg
+            class="light-icon"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6.28364 4.70137L4.32 2.73973L2.78182 4.28493L4.73455 6.24657L6.28364 4.70137ZM0 10.9041H3.27273V13.0959H0V10.9041ZM10.9091 0H13.0909V3.23288H10.9091V0ZM19.68 2.73425L21.216 4.27616L19.2633 6.23781L17.7284 4.69479L19.68 2.73425ZM17.7164 19.2986L19.6691 21.2712L21.2073 19.726L19.2436 17.7644L17.7164 19.2986ZM20.7273 10.9041H24V13.0959H20.7273V10.9041ZM12 5.42466C8.38909 5.42466 5.45455 8.3726 5.45455 12C5.45455 15.6274 8.38909 18.5753 12 18.5753C15.6109 18.5753 18.5455 15.6274 18.5455 12C18.5455 8.3726 15.6109 5.42466 12 5.42466ZM12 16.3836C9.58909 16.3836 7.63636 14.4219 7.63636 12C7.63636 9.57808 9.58909 7.61644 12 7.61644C14.4109 7.61644 16.3636 9.57808 16.3636 12C16.3636 14.4219 14.4109 16.3836 12 16.3836ZM10.9091 20.7671H13.0909V24H10.9091V20.7671ZM2.78182 19.7151L4.32 21.2603L6.27273 19.2877L4.73455 17.7425L2.78182 19.7151Z"
+              fill="white"></path>
+          </svg>
+        </div>
+      </nav>
+      <nav class="desktop-nav">
+        {
+          links.map((link) => (
+            <a
+              href={link.path}
+              class:list={
+                Astro.url.pathname === link.path ||
+                Astro.url.pathname === `${link.path}/`
+                  ? "active"
+                  : ""
+              }
+            >
+              {link.text}
+            </a>
+          ))
+        }
+        <div class="theme-toggler" role="button">
+          <svg
+            class="dark-icon"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 18C6.5 18 4.375 17.125 2.625 15.375C0.875 13.625 0 11.5 0 9C0 6.5 0.875 4.375 2.625 2.625C4.375 0.875 6.5 0 9 0C9.23333 0 9.46267 0.00833343 9.688 0.0250001C9.91267 0.0416668 10.1333 0.0666666 10.35 0.0999999C9.66667 0.583333 9.121 1.21233 8.713 1.987C8.30433 2.76233 8.1 3.6 8.1 4.5C8.1 6 8.625 7.275 9.675 8.325C10.725 9.375 12 9.9 13.5 9.9C14.4167 9.9 15.2583 9.69567 16.025 9.287C16.7917 8.879 17.4167 8.33333 17.9 7.65C17.9333 7.86667 17.9583 8.08733 17.975 8.312C17.9917 8.53733 18 8.76667 18 9C18 11.5 17.125 13.625 15.375 15.375C13.625 17.125 11.5 18 9 18ZM9 16C10.4667 16 11.7833 15.596 12.95 14.788C14.1167 13.9793 14.9667 12.925 15.5 11.625C15.1667 11.7083 14.8333 11.775 14.5 11.825C14.1667 11.875 13.8333 11.9 13.5 11.9C11.45 11.9 9.704 11.1793 8.262 9.738C6.82067 8.296 6.1 6.55 6.1 4.5C6.1 4.16667 6.125 3.83333 6.175 3.5C6.225 3.16667 6.29167 2.83333 6.375 2.5C5.075 3.03333 4.021 3.88333 3.213 5.05C2.40433 6.21667 2 7.53333 2 9C2 10.9333 2.68333 12.5833 4.05 13.95C5.41667 15.3167 7.06667 16 9 16Z"
+              fill="white"></path>
+          </svg>
+          <svg
+            class="light-icon"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6.28364 4.70137L4.32 2.73973L2.78182 4.28493L4.73455 6.24657L6.28364 4.70137ZM0 10.9041H3.27273V13.0959H0V10.9041ZM10.9091 0H13.0909V3.23288H10.9091V0ZM19.68 2.73425L21.216 4.27616L19.2633 6.23781L17.7284 4.69479L19.68 2.73425ZM17.7164 19.2986L19.6691 21.2712L21.2073 19.726L19.2436 17.7644L17.7164 19.2986ZM20.7273 10.9041H24V13.0959H20.7273V10.9041ZM12 5.42466C8.38909 5.42466 5.45455 8.3726 5.45455 12C5.45455 15.6274 8.38909 18.5753 12 18.5753C15.6109 18.5753 18.5455 15.6274 18.5455 12C18.5455 8.3726 15.6109 5.42466 12 5.42466ZM12 16.3836C9.58909 16.3836 7.63636 14.4219 7.63636 12C7.63636 9.57808 9.58909 7.61644 12 7.61644C14.4109 7.61644 16.3636 9.57808 16.3636 12C16.3636 14.4219 14.4109 16.3836 12 16.3836ZM10.9091 20.7671H13.0909V24H10.9091V20.7671ZM2.78182 19.7151L4.32 21.2603L6.27273 19.2877L4.73455 17.7425L2.78182 19.7151Z"
+              fill="white"></path>
+          </svg>
+        </div>
+      </nav>
+    </header>
+    <slot />
+  </body>
+</html>
+
+<script is:inline>
+  // Event listeners
+  document.getElementById("menu-btn").addEventListener("click", () => {
+    const header = document.getElementById("main-header");
+    if (header.classList.contains("open")) {
+      document.documentElement.classList.remove("no-scroll");
+    } else {
+      document.documentElement.classList.add("no-scroll");
+    }
+    header.classList.toggle("open");
+  });
+
+  const themeTogglers = Array.from(
+    document.getElementsByClassName("theme-toggler")
+  );
+  themeTogglers.forEach((element) => {
+    element.addEventListener("click", () => {
+      const newTheme = document.documentElement.classList.contains("dark")
+        ? "light"
+        : "dark";
+      document.documentElement.classList.toggle("dark");
+      localStorage.setItem("mateusmrn-theme", newTheme);
+    });
+  });
+</script>

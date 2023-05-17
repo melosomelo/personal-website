@@ -1,0 +1,61 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AboutMeCard from "../components/AboutMeCard.astro";
+import PostCard from "../components/PostCard.astro";
+import Footer from "../components/Footer.astro";
+import HomepageCarousel from "../components/HomepageCarousel.astro";
+import augmentPostData from "../lib/augmentPostData";
+
+const posts = (
+  await Promise.all(
+    (
+      await getCollection("blog", ({ data }) => !data.draft)
+    ).map(async (post) => augmentPostData(post))
+  )
+)
+  .slice(0, 5)
+  .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+---
+
+<style>
+  main {
+    width: 90%;
+    margin: 0 auto;
+    max-width: 1000px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .recent-articles {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  :global(.recent-articles > * + *) {
+    margin-top: 4rem;
+  }
+
+  h2 {
+    font-size: var(--h1);
+    margin-top: 5rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+</style>
+<BaseLayout
+  title="home"
+  description="I'm Mateus, a computer science student and currently a software engineer at IBM Brazil. I write about the stuff I'm currently studying or that I like."
+>
+  <main>
+    <HomepageCarousel />
+    <AboutMeCard showButton />
+    <section class="recent-articles">
+      <h2>Recent articles</h2>
+      {posts.map((post) => <PostCard {...post} />)}
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

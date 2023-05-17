@@ -1,0 +1,143 @@
+---
+import Button from "./Button.astro";
+
+interface Props {
+  summaryText?: boolean;
+  showButton?: boolean;
+}
+
+const { summaryText, showButton } = Astro.props;
+const text = summaryText
+  ? `But you can call me Matt. I'm currently a software engineer at IBM Brazil
+      and I work mostly with backend stuff. I write constantly about things I'm
+      currently studying or that I find interesting.`
+  : `But you can call me Matt. I'm a computer science student at 
+  <a href="https://en.wikipedia.org/wiki/Federal_University_of_Rio_Grande_do_Norte" target="_blank" style="text-decoration: underline; color: var(--purple);">UFRN</a> and I also work as a software engineer at IBM Brazil.
+  My main interests are with backend stuff and software architecture, but I love to study different things and write 
+  about them. Hope you find something useful here.`;
+---
+
+<style>
+  article {
+    background-color: var(--white);
+
+    padding: 4rem 2.4rem;
+  }
+
+  html.dark article {
+    background-color: rgba(21, 21, 21, 0.3);
+  }
+
+  .mobile-content header {
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 2.4rem;
+  }
+
+  .mobile-content h1 {
+    font-size: var(--pg1);
+    color: var(--total-black);
+  }
+
+  html.dark .mobile-content h1 {
+    color: var(--pure-white);
+  }
+
+  html.dark .mobile-content p,
+  html.dark .desktop-content p {
+    color: var(--medium-gray);
+  }
+
+  .mobile-content img {
+    width: 20%;
+    min-width: 70px;
+    aspect-ratio: 1;
+
+    margin-right: 1.6rem;
+
+    border-radius: 50%;
+  }
+
+  .mobile-content p {
+    color: var(--dark-gray);
+    font-size: var(--pg1);
+    letter-spacing: 0.01em;
+    line-height: 1.4;
+  }
+
+  .desktop-content {
+    display: none;
+  }
+
+  .desktop-content img {
+    min-width: 160px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+
+    margin-right: 4.8rem;
+  }
+
+  .desktop-content h1 {
+    font-size: 2.4rem;
+    margin-bottom: 2.4rem;
+  }
+
+  .desktop-content p {
+    font-size: var(--pg1);
+    color: var(--dark-gray);
+
+    letter-spacing: -0.01em;
+    line-height: 140%;
+  }
+
+  @media screen and (min-width: 800px) {
+    article {
+      padding: 4rem 7rem;
+    }
+    .mobile-content {
+      display: none;
+    }
+
+    .desktop-content {
+      display: flex;
+      align-items: flex-start;
+    }
+  }
+</style>
+<article>
+  <div class="mobile-content">
+    <header>
+      <img
+        src="/images/illustration-small.png"
+        alt="Illustration of Mateus Nascimento"
+      />
+      <h1>Hi! <br /> I'm Mateus Nascimento</h1>
+    </header>
+    <p set:html={text} />
+    {
+      showButton && (
+        <a href="/contact">
+          <Button style="width: 100%; margin-top: 2.4rem;">Contact me!</Button>
+        </a>
+      )
+    }
+  </div>
+  <div class="desktop-content">
+    <img
+      src="/images/illustration.png"
+      alt="Illustration of Mateus Nascimento"
+    />
+    <div>
+      <h1>Hi! I'm Mateus Nascimento</h1>
+      <p set:html={text} />
+      {
+        showButton && (
+          <a href="/contact">
+            <Button style="margin-top: 2.4rem;">Contact me</Button>
+          </a>
+        )
+      }
+    </div>
+  </div>
+</article>

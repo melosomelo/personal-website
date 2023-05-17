@@ -1,0 +1,81 @@
+---
+import type { AugmentedPostData } from "../types";
+import CategoryPill from "./CategoryPill.astro";
+import PostMeta from "./PostMeta.astro";
+
+type Props = AugmentedPostData;
+
+const {
+  title,
+  categories,
+  subtitle,
+  lastEditedAt,
+  publishedAt,
+  readingTime,
+  slug,
+} = Astro.props;
+---
+
+<style>
+  .post-card {
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--gray);
+    width: 100%;
+  }
+
+  :global(.post-card > * + *) {
+    margin-top: 1.6rem;
+  }
+
+  html.dark article {
+    border-bottom: 1px solid var(--dark-gray);
+  }
+  .categories {
+    display: flex;
+    align-items: center;
+  }
+
+  :global(.categories > * + *) {
+    margin-left: 0.8rem;
+  }
+
+  h1 {
+    font-size: var(--h3);
+    font-family: "iA Writer Mono", monospace;
+    transition: 0.3s;
+  }
+
+  h1:hover {
+    color: var(--purple);
+  }
+
+  p {
+    font-size: var(--pg2);
+    color: var(--dark-gray);
+  }
+
+  html.dark p {
+    color: var(--medium-gray);
+  }
+
+  @media screen and (min-width: 800px) {
+    .post-card {
+      padding-bottom: 4rem;
+    }
+  }
+</style>
+<article class="post-card">
+  <div class="categories">
+    {categories.map((category) => <CategoryPill name={category} />)}
+  </div>
+  <a href={`/post/${slug}`} style="display: block; ">
+    <h1>{title}</h1>
+  </a>
+  <p>{subtitle}</p>
+  <PostMeta
+    lastEditedAt={lastEditedAt}
+    publishedAt={publishedAt}
+    readingTime={readingTime}
+    title={title}
+  />
+</article>
