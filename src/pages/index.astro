@@ -15,7 +15,8 @@ const posts = (
   )
 )
   .slice(0, 5)
-  .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+  .sort((a, b) => a.publishedAt.getTime() - b.publishedAt.getTime())
+  .reverse();
 ---
 
 <style>
