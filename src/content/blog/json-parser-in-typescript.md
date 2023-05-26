@@ -28,7 +28,9 @@ For example, consider the alphabet $\Sigma = \{a,b,c\}$. We can use it to constr
 - A language with three words made up of single characters $\{a,b,c\}$.
 - An infinite language $ABCN$, made up of words that have $n \geq 1$ $a$ characters, followed by $n$ $b$s
   and $n$ $c$s $\{abc,aabbcc, aaabbbccc, \dots \}$.
-- An infinite language $JS$, made up of all the valid JavaScript programs $\{\texttt{let x = 2;}, \dots\}$
+
+We could also use something like the [Unicode alphabet](https://en.wikipedia.org/wiki/List_of_Unicode_characters)
+to construct the language of all valid JavaScript programs $\{\texttt{let x = 2;}, \dots\}$.
 
 The two last items are of particular interest to us. First, they're both infinite. We provide a
 finite description that _generates_ an infinite set. We can't do much with it as of now, but we've
@@ -39,5 +41,7 @@ that $\texttt{cnst x = 2;}$ is not a valid JavaScript program. We can provide a 
 as to why they don't, but (especially in the JavaScript program case), it'd be lacking formalism.
 
 In natural languages such as French and English,
-the subject which describes what makes up a valid sentence in that language is called its **grammar**.
-Formal languages also possess grammars, but they're a bit different.
+the part which describes what makes up a valid sentence in that language is called its **grammar**.
+Formal languages also possess grammars, but they're a bit different. Instead of statically describing
+_what_ a valid sentence looks like, it describes _how_ to generate all of the valid sentences for that
+language.
