@@ -6,10 +6,6 @@ publishedAt: 2023-05-25T00:00:00-03:00
 categories: [math, computer-science, typescript]
 ---
 
-Parsing is a pretty fundamental topic in computer science. Being able to systematically and efficiently
-validate the structure of a sequence of characters has numerous applications in lots of fields,
-but the most important one certainly is validating the syntax of files written in specific programming languages.
-
 ## A sprinkle of theory
 
 The mathematical basis for parsing is the theory of
