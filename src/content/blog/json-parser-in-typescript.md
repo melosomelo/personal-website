@@ -104,3 +104,19 @@ Thus, we can describe what it means to successfully (or not) parse a string in t
 languages, grammars and parse trees. <mark>Given a string $s$, to check if $s$ belongs in
 a language $L$, we have to first find a grammar $G$ that generates $L$ and attempt
 to produce a valid parse tree for $s$ with $G$.</mark>
+
+This is exactly what we're going to do now. We're going to write a formal grammar
+that describes the JSON language and then we're going to use it to create a parser.
+
+:::details[Different types of grammars]
+General formal grammars are very expressive and can be used to represent lots of
+different languages. At the same time, if let unrestricted, their analysis can become
+really difficult and their associated parsing algorithms inefficient. Because of this,
+a categorization of formal languages has been put it place, so as to facilitate their study.
+It is know as the [Chomsky hierarchy](https://en.wikipedia.org/wiki/Chomsky_hierarchy), and
+it divides formal grammars into types 0,1,2 and 3, with Type 0 being the unrestricted formal grammars.
+I mention this because there is no general efficient parsing algorithm for all grammar types and thus
+we need to adapt our grammar so as to fit a particular level in the hierarchy. Most efficient
+parsers target Type 2 grammars, also called **context-free grammars**, as they have a good mixture
+of expressiveness and simplicity.
+:::
