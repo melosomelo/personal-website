@@ -4,7 +4,7 @@ import CategoryPill from "./CategoryPill.astro";
 import PostMeta from "./PostMeta.astro";
 import augmentPostData from "../lib/augmentPostData";
 
-const slugs = ["avl"];
+const slugs = ["json-parser-in-typescript", "bezier-curves"];
 const posts = await Promise.all(
   slugs.map((slug) =>
     getEntryBySlug("blog", slug).then((post) => augmentPostData(post!))
