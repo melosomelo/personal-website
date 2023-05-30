@@ -8,115 +8,57 @@ categories: [math, computer-science, typescript]
 
 ## A sprinkle of theory
 
-The mathematical basis for parsing is the theory of
-[formal linguistics](https://en.wikipedia.org/wiki/Formal_language).
-Its objects of study are formal **languages** and **grammars**.
+The mathematical basis for parsing is the theory of **formal lingustics**. Its objects of study
+are formal **languages** and **grammars**.
 
-In formal linguistics, languages are merely **sets of strings of characters**, whose individual characters
-are listed in an auxiliary set called its **alphabet**. The strings
-in the language are called **words** or **sentences**. Some languages can also contain the
-**empty word**, usually denoted by $\epsilon$.
+As complex and subjective as natural languages can be, formal languages are treated merely as **sets of strings
+of characters**. The individual characters in turn are defined in an auxiliary
+set called an **alphabet**. Each element of the language set is called a **word** or a **sentence**.
 
-For example, consider the alphabet $\Sigma = \{a,b,c\}$. We can use it to construct many languages:
+Common string operations, such as concatenation, are also defined for formal languages. It is no
+surprise then that the **empty string** (the string with no length, you
+probably know it as `""`) is also a present construct, and is
+usually denoted (and will so for the remainder of this article) by the greek letter $\epsilon$.
 
-- A language with a single word $\{abc\}$.
-- A language with just the empty word $\{\epsilon\}$.
-- A language with three words made up of single characters $\{a,b,c\}$.
-- An infinite language $ABCN$, made up of words that have $n \geq 1$ $a$ characters, followed by $n$ $b$s
-  and $n$ $c$s $\{abc,aabbcc, aaabbbccc, \dots \}$.
+As an example, consider the alphabet $\Sigma = \{a,b,c\}$. We can construct many (infinite, actually)
+languages from it:
 
-We could also use something like the [Unicode alphabet](https://en.wikipedia.org/wiki/List_of_Unicode_characters)
-to construct the language of all valid JavaScript programs $\{\texttt{let x = 2;}, \dots\}$.
+- A finite language of all the permutations of these characters: $\{abc, acb, bca, bac, cab, cba\}$.
+- A finite language of single-character words: $\{a,b,c\}$.
+- A finite language with only the empty string: $\{\epsilon\}$.
+- An infinite language $ABCN$, where each word has $n$ $a$s followed by $n$ $b$s and $n$ $c$s:
+  $\{abc, aabbcc, aaabbbccc, \dots\}$.
 
-The last two items are of particular interest to us. First, they're both infinite.
-We provide a finite (albeit informal) description that _generates_ an infinite set.
-Also, they posses a more visible _structure_ than the other ones that enables us to
-tell when a string does not belong in the language. For example, we know that the string
-$abbcc$ does not belong in $ABCN$ and that $\texttt{cnst x = 2;}$ is not a valid JavaScript
-program. We can too provide a reasonable explanation as to why is that, but (especially)
-in the JavaScript program case, it'd be lacking formalism. So far, we just "know".
+The use of formal languages is not limited to only model these seemingly unimportant scenarios.
+Actually, we can use this simple definition to represent things that are very much present
+in our daily lives as software engineers.
 
-In natural languages such as French and English,
-the part which describes what makes up a valid sentence in that language is called its **grammar**.
-Formal languages also possess grammars, but they're a bit different. Instead of statically describing
-_what_ a valid sentence looks like, it describes _how_ to generate all of the valid sentences for that
-language. A single formal language can have many different grammars.
+For example, we can define the language of all valid arithmetic expressions involving the
+addition and multiplication operators, $ARITH$. A string such as $32 \cdot (4 + 2)$ would belong in that set,
+while a malformed expression such as $1 + \cdot 2$ would not. Another relevant example would be
+the language $JS$ of all valid JavaScript programs (they are, after all, just sequences of characters).
+Something like $\texttt{const x = 2;}$ belongs in that set, while $\{\texttt{cnst =x2 if()}\}$
+most certainly doesn't.
 
-Formally, a **formal grammar** is a 4-tuple (a fancy word for "something that is made up of 4 parts") with:
+This hints at the fact that parsing an input string $s$ actually is just checking if $s$
+belongs to a specific language set. If it does, then the parse will be successful. If it does not,
+then $s$ is malformed and a syntax error must be thrown.
 
-- $V_T$, a set of symbols called **terminal symbols**. These are the symbols that actually make up
-  the strings in the language.
-- $V_N$, a set of symbols called **non-terminal symbols**. These are symbols that are meant to be
-  replaced in the _productions_ from the grammar so that the final strings can be produced.
-- $S$, a special non-terminal called the **starting symbol**. All constructions of strings
-  from a language start with it.
-- $P$, a set of **productions**. These are _rules_ that tell us how to transform a set of symbols
-  from the grammar (both terminal and non-terminal) into another set of symbols (terminal and non-terminal).
+---
 
-Usually, to construct a valid string for a language with its grammar we (1) begin with the starting symbol
-and (2) apply production rules until the string is made up of only terminal symbols.
+That's great and all, but this doesn't gives us a general, formal way of telling if $s$
+belongs to $L$, especially for cases when $L$ is infinite. As of now, we "just know" by
+looking at both. We can even provide a _why_ to justify $s$ being malformed (e.g., "`if x === 2` doesn't
+belong in $JS$ because an `if` keyword must be followed by a pair of parenthesis!), but it'd still
+lack formalism.
 
-This definition becomes clearer with an example. Let's consider the language of all valid arithmetic
-expressions involving the operators $+$ and $\cdot$. A string such as $3 \cdot (4 + 2)$ would be in
-that language, while $3 + \cdot 2$ would not. Here's one possible grammar for it:
+So, what do we do? Well, looking at some of our previous examples,
+there's clearly an _implicit set of rules_ that a string needs to follow in order to be considered
+an element of that language set. One such rule for the $JS$ language could be: "the definition for a function
+must begin with the keyword `function`".
 
-- $S \rightarrow E$
-- $E \rightarrow E + E \mid E \cdot E \mid (E) \mid N$
-- $N \rightarrow DR$
-- $D \rightarrow 0 \mid 1 \mid 2 \mid \cdots \mid 9$
-- $R \rightarrow \epsilon \mid DR$
-
-Each line here represents one (or more) productions from the grammar. A production turns
-the symbols on its left-hand side into the symbols on its right. The lines with the $\mid$ symbol
-mere aggregate productions that have the same set of symbols on their left. The uppercase letters
-here are the non-terminals and the digits, the operators and the parenthesis are the terminals. Also
-notice how some rules transform a non-terminal into the empty string $\epsilon$. That's completely
-valid (and very useful).
-
-As an example, let's construct the string $32 \cdot (4 + 2)$ using the grammar above. We start with
-$S$ and then apply the rule $S \rightarrow E \cdot E$. We can apply the $(E)$ rule on the second $E$
-to get $E \cdot (E)$. We then continue on the second $E$ and expand it to $E + E$, resulting in
-$E \cdot (E + E)$. Things are starting to get really similar. The remaining steps are:
-
-$$
-E \cdot (E+E) \rightarrow N \cdot (E+E) \\
-\rightarrow DR \cdot (E+E) \\
-\rightarrow 3R \cdot (E+E) \\
-\rightarrow 3DR \cdot (E+E) \\
-\rightarrow 32R \cdot (E+E) \\
-\rightarrow 32\epsilon \cdot (E+E) \\
-\rightarrow 32 \cdot (N + N) \\
-\rightarrow 32 \cdot (DR + DR)\\
-\rightarrow 32 \cdot (4 + 2)
-$$
-
-I skipped some steps, but you get the gist of it. We applied a number of productions rules
-and generated the desired string in the language. This production process can also be
-represented visually:
-
-![A parse tree for the string 32 * (4 + 2)](/images/posts/json-parser-in-typescript/parse-tree01.png)
-
-This is what's called a **parse tree** or a **production tree**. The root is the starting symbol
-of the grammar and, since the string does belong in the language, all of the leaves are terminal symbols.
-By constructing a valid parse tree, we have checked that the string does indeed belong to the language.
-
-Thus, we can describe what it means to successfully (or not) parse a string in terms of
-languages, grammars and parse trees. <mark>Given a string $s$, to check if $s$ belongs in
-a language $L$, we have to first find a grammar $G$ that generates $L$ and attempt
-to produce a valid parse tree for $s$ with $G$.</mark>
-
-This is exactly what we're going to do now. We're going to write a formal grammar
-that describes the JSON language and then we're going to use it to create a parser.
-
-:::details[Different types of grammars]
-General formal grammars are very expressive and can be used to represent lots of
-different languages. At the same time, if let unrestricted, their analysis can become
-really difficult and their associated parsing algorithms inefficient. Because of this,
-a categorization of formal languages has been put it place, so as to facilitate their study.
-It is know as the [Chomsky hierarchy](https://en.wikipedia.org/wiki/Chomsky_hierarchy), and
-it divides formal grammars into types 0,1,2 and 3, with Type 0 being the unrestricted formal grammars.
-I mention this because there is no general efficient parsing algorithm for all grammar types and thus
-we need to adapt our grammar so as to fit a particular level in the hierarchy. Most efficient
-parsers target Type 2 grammars, also called **context-free grammars**, as they have a good mixture
-of expressiveness and simplicity.
-:::
+For natural languages such as English or French, this "set of rules" is called their **grammar**.
+It describes what makes up a valid sentence in that language. Formal languages also posses grammars,
+but they're a bit different. Instead of statically describing _what_ a valid sentence looks like,
+it describes _how_ to generate all of the valid sentences for that language. A single formal language
+can have many different grammars.
