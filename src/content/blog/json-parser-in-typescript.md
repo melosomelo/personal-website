@@ -44,11 +44,9 @@ This hints at the fact that parsing an input string $s$ actually is just checkin
 belongs to a specific language set. If it does, then the parse will be successful. If it does not,
 then $s$ is malformed and a syntax error must be thrown.
 
----
-
 That's great and all, but this doesn't gives us a general, formal way of telling if $s$
 belongs to $L$, especially for cases when $L$ is infinite. As of now, we "just know" by
-looking at both. We can even provide a _why_ to justify $s$ being malformed (e.g., "`if x === 2` doesn't
+looking at both. We can even provide a _why_ to justify $s$ being malformed (e.g., "`if x === 2 {}` doesn't
 belong in $JS$ because an `if` keyword must be followed by a pair of parenthesis!), but it'd still
 lack formalism.
 
@@ -97,9 +95,11 @@ D \rightarrow 0 \mid 1 \mid 2 \mid \dots \mid 9 \\
 R \rightarrow DR \mid \epsilon
 $$
 
-Each line represents one (or more) production rules. Each rule states that you can take what's on
-its left side and transform it into what's on the right. The lines that have the $\mid$ character
-merely aggregate productions that have the same left side.
+Each line above represents one (or more) production rules.
+A rule states that you can take what's on its left side (left of the arrow $\rightarrow$) and
+transform it into what's on the right. The lines that have the $\mid$ character merely aggregate
+productions that have the same left side. Here, the non-terminals are represented by the uppercase
+letters; and the terminals are the digits, the operators $+$ and $\cdot$, and the parenthesis.
 
 Notice how the non-terminal $E$
 is a direct representation of our previous definition for what an expression is. Also notice
@@ -128,8 +128,9 @@ and applied a series of rules that derived $s$. This process can also be represe
 ![Visual representation of the derivation of 32 * (4 + 2)](/images/json-parser-in-typescript/parse-tree-32times4plus2.png)
 
 This is what's called a **parse tree** or a **production tree**. The root is $S$ and the leaves
-are all the terminal symbols of the final string. Each non-leaf node is a terminal and
+are all the terminal symbols of the final string. Each non-leaf node is a non-terminal and
 its children are created based on a specific rule from the grammar.
+
 Depending on the grammar, a single string can
 have multiple parse trees (can be derived using different combinations of productions).
 If that's the case, the grammar is said to be **ambiguous**. Our grammar for $ARITH$ is ambiguous
@@ -141,8 +142,10 @@ To do so, we need to construct a grammar $G$ that describes $L$ and check if we 
 (construct its parse tree) using $G$'s rules. <mark>Thus, parsing a string is actually attempting to
 construct its parse tree.</mark>
 
-That's what we're going to do next. We're going to build a formal grammar that describes the JSON
-language, and based on it, we're going to write a parser.
+I know this is quite a bit of theory, but it truly is essential to really understanding the process
+of building a parser. If you're not 100% comfortable with it yet, I recommend that you read it
+again, as we will build upon it on the next section, where I go into a bit more detail on what
+kind of parser we're going to build.
 
 :::details[Different types of grammars]
 Formal grammars are very expressive and can describe lots of different languages. At the same time,
@@ -157,17 +160,35 @@ hierarchy. Most efficient parsing algorithms target type 2 grammars, also called
 as they have a good balance of simplicity and expressiveness.
 :::
 
-## It's ~morbin'~ parsing time
+## Defining our strategy
 
-We've seen that parsing a string $s$ boils down to reconstructing its parse tree
+We have established that parsing a string $s$ boils down to reconstructing its parse tree
 using a grammar that describes the language. There are two main ways to do this:
 **top-down** (starting at the root and ending with the leaves) and **bottom-up**
 (starting at the leaves and finishing with the root).
 
-We're going to build a top-down parser, as they're easier to write by hand
-and the requirements for the grammar aren't too taxing for simple languages like
+We're going to build a top-down parser, as they're usually easier to write by hand
+and the requirements for the associated grammar aren't too taxing for simple languages like
 JSON (we'll talk about these in a minute).
 
-We've already performed top-down parsing in this article. Our previous example of
+You may not have realized it, but we've already performed top-down parsing in this article.
+Our previous example of
 deriving the string $32 \cdot (4 + 2)$ using the grammar for the language $ARITH$ was just that.
-We started with $S$ and then applied a series of production rules until we got the input string.
+We started with $S$ (the root) and then applied a series of production rules
+until we got the input string (the leaves).
+
+In that example, you can see that we deliberately picked the rules that got us closer to the input
+string. We, as readers, can make that distinction based on intuition. The computer, of course, cannot.
+
+A naive approach then would be for the parser to test every possible production at every step, and
+when it got stuck, it would backtrack and try a different route.
+Needless to say, this would be incredibly slow. Some parsers do work based on backtracking,
+but they do it on smaller sets of possible productions and are still considered inefficient
+for practical purposes.
+
+The ideal scenario is for the parser to know _exactly_ which production to apply, at all times,
+and if it reaches a dead-end it's because the input string is malformed. But based on what
+will it be able to perform such deductions? Is such a parser even possible? Yes, it is. They're called **deterministic parsers**, and we're going to build one of them.
+
+A deterministic top-down parser iterates over two strings: the input string $s_i$ and $s_c$,
+the one that's being manipulated via the grammar rules to look like $s_i$.
