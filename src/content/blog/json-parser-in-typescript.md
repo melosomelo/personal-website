@@ -160,7 +160,7 @@ hierarchy. Most efficient parsing algorithms target type 2 grammars, also called
 as they have a good balance of simplicity and expressiveness.
 :::
 
-## Defining our strategy
+## Defining and understanding our strategy
 
 We have established that parsing a string $s$ boils down to reconstructing its parse tree
 using a grammar that describes the language. There are two main ways to do this:
@@ -187,8 +187,31 @@ but they do it on smaller sets of possible productions and are still considered 
 for practical purposes.
 
 The ideal scenario is for the parser to know _exactly_ which production to apply, at all times,
-and if it reaches a dead-end it's because the input string is malformed. But based on what
+and if it reaches a dead-end then it's because the input string is malformed. But based on what
 will it be able to perform such deductions? Is such a parser even possible? Yes, it is. They're called **deterministic parsers**, and we're going to build one of them.
 
-A deterministic top-down parser iterates over two strings: the input string $s_i$ and $s_c$,
-the one that's being manipulated via the grammar rules to look like $s_i$.
+A deterministic top-down parser gradually iterates over two strings: the input string $s_i$ and $s_c$,
+the one that's being manipulated via the grammar rules to look like $s_i$. At every iteration, it
+checks the current character at $s_c$:
+
+- If the character is a non-terminal $A$, then it reads the current terminal $x$ from $s_i$ and based
+  on the pair $(A,x)$, it chooses a production (we'll detail this in a moment). If such a choice
+  is not possible, a syntax error is thrown.
+- If the character is a terminal $a$, then it compares $x$ and $a$. If they're equal, then the parser
+  advances on both $s_i$ and $s_c$. If they aren't, then a syntax error is thrown.
+
+How is the parser able to choose the right production based on a non-terminal $A$ and a terminal $x$?
+That's because of what's called a **parsing table**. Each entry $(A,x)$ from the table is the production
+that the parser must apply whenever it encounters a terminal $x$ when it's dealing with the terminal $A$
+in $s_c$. If the table entry is empty, then a syntax error happened.
+
+How is the parsing table constructed? Well, there is a short and long answer.
+
+The short answer is that there are algorithms that automatically generate parsing tables,
+and they do it by analyzing the grammar. To guarantee that each entry in your parsing table
+has no more than one production (and thus that your parser is deterministic), your grammar
+needs to be in what's called $LL(1)$ form, i.e., it must be written in such a way that
+enables the construction of a deterministic top-down parser.
+
+I'll give you the long answer in the next section. For now, let's run an example
+to solidify our understanding of how a deterministic top-down parser works.
