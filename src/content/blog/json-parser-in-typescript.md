@@ -190,28 +190,122 @@ The ideal scenario is for the parser to know _exactly_ which production to apply
 and if it reaches a dead-end then it's because the input string is malformed. But based on what
 will it be able to perform such deductions? Is such a parser even possible? Yes, it is. They're called **deterministic parsers**, and we're going to build one of them.
 
-A deterministic top-down parser gradually iterates over two strings: the input string $s_i$ and $s_c$,
-the one that's being manipulated via the grammar rules to look like $s_i$. At every iteration, it
-checks the current character at $s_c$:
+This is how a deterministic top-down parser works:
 
-- If the character is a non-terminal $A$, then it reads the current terminal $x$ from $s_i$ and based
-  on the pair $(A,x)$, it chooses a production (we'll detail this in a moment). If such a choice
-  is not possible, a syntax error is thrown.
-- If the character is a terminal $a$, then it compares $x$ and $a$. If they're equal, then the parser
-  advances on both $s_i$ and $s_c$. If they aren't, then a syntax error is thrown.
+- It receives an input string to parse. It concatenates this string with a special terminal symbol
+  $\#$. This symbol is called the **end of input** symbol. We need it to deal with cases
+  when a syntax error occurs because the input string ended unexpectedly. This new
+  string wil be referred to as $s_i$.
+- After this, it initializes a temporary string $s_t$ to $S\#$ (the grammar's starting symbol
+  concatenated with the end of input character).
+  This string will be manipulated via the grammar rules to look like $s_i$.
+- The parser initializes pointers to the start of both $s_i$ and $s_t$ and begins its iterative process.
+- At every iteration, it will look at the current symbol that it's pointing to in $s_t$ and will
+  check:
+  - If the symbol is a non-terminal $A$, then it reads the current terminal $x$ from $s_i$ and
+    based on the pair $(A,x)$, it chooses a production to apply and replace $A$ (we'll detail
+    how it makes that choice in a moment). This choice is **guaranteed** to get $s_t$ closer to $s_i$.
+    If such a choice is not possible, a syntax error is thrown.
+  - If the character is a terminal $a$, then it compares $x$ and $a$. If they're equal, then the parser
+    advances to the next symbol of both $s_i$ and $s_t$. If they aren't, then a syntax error is thrown.
 
-How is the parser able to choose the right production based on a non-terminal $A$ and a terminal $x$?
-That's because of what's called a **parsing table**. Each entry $(A,x)$ from the table is the production
-that the parser must apply whenever it encounters a terminal $x$ when it's dealing with the terminal $A$
-in $s_c$. If the table entry is empty, then a syntax error happened.
+This process ends when both $s_i$ and $s_t$ have reached the end of input character at the same time.
 
-How is the parsing table constructed? Well, there is a short and long answer.
+You may be wondering yourself, how is the parser able to choose the right production based on a
+non-terminal $A$ and a terminal $x$? That's because of what's called a **parsing table**. Each
+entry $(A,x)$ from that table is the production the parser must apply when it encounters a terminal $x$
+in $s_i$ and a non-terminal $A$ in $s_t$ in order to make $s_t$ more like $s_i$.
+If the table entry is empty, then this means that there's a
+syntax error in $s_i$.
 
-The short answer is that there are algorithms that automatically generate parsing tables,
-and they do it by analyzing the grammar. To guarantee that each entry in your parsing table
-has no more than one production (and thus that your parser is deterministic), your grammar
-needs to be in what's called $LL(1)$ form, i.e., it must be written in such a way that
-enables the construction of a deterministic top-down parser.
+This of course leads to the question: how (and when) is the parsing table constructed?
+There's a short and a long answer.
 
-I'll give you the long answer in the next section. For now, let's run an example
-to solidify our understanding of how a deterministic top-down parser works.
+The short answer is that there algorithms that automatically generate parsing tables,
+and they do it by analyzing the grammar. This is done before you even write your parser.
+To guarantee that each entry in the parsing table has no more than one production (and thus
+that your parser is deterministic), your grammar needs to be in what's called $LL(1)$ form,
+i.e., it must be written in such a way that it has a set of properties that guarantee
+the parser is deterministic.
+
+I know this isn't very satisfactory as of now, but bear with me. I'll give you the long
+answer in the next section. For now, let's go through an example to solidify our understanding
+of how a deterministic top-down parser works.
+
+Consider the following grammar:
+
+$$
+S \rightarrow a A b \mid b A a \\
+A \rightarrow c S \mid \epsilon
+$$
+
+It produces strings like $ab$, $ba$, $acbab$, $bcaba$, etc.
+Let's parse the string $acbab$ in a top-down fashion. Each line of the table below represents
+an iteration of the parsing algorithm. The character $\mid$ is the position of the parser
+in the input string $s_i$ and the temporary string $s_t$.
+
+|       $s_t$        |       $s_i$        |                    Action taken                     |
+| :----------------: | :----------------: | :-------------------------------------------------: |
+|     $\mid S\#$     |   $\mid acbab\#$   |        Apply production $S \rightarrow aAb$         |
+|    $\mid aAb\#$    |   $\mid acbab\#$   | Terminal from $$ and $s_i$ are equal, thus advance. |
+|    $a\mid Ab\#$    |  $a \mid cbab\#$   |         Apply production $A \rightarrow cS$         |
+|   $a\mid cSb\#$    |  $a \mid cbab\#$   |            Terminals are equal. Advance.            |
+|   $ac\mid Sb\#$    |   $ac\mid bab\#$   |        Apply production $S \rightarrow bAa$         |
+|  $ac\mid bAab\#$   |   $ac\mid bab\#$   |            Terminals are equal. Advance.            |
+| $ac b \mid Aab\#$  |  $ac b\mid ab\#$   |      Apply production $A \rightarrow \epsilon$      |
+|  $ac b \mid ab\#$  |  $ac b\mid ab\#$   |            Terminals are equal. Advance.            |
+| $ac b  a \mid b\#$ | $ac b a \mid b\#$  |            Terminals are equal. Advance.            |
+| $ac b  a b\mid\#$  | $ac b a b \mid \#$ |     Parsing is finished. Input string is valid.     |
+
+And the parsing table for this parser is:
+
+<div class="table-container">
+  <table>
+    <tr>
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+      <th>c</th>
+      <th>#</th>
+    </tr>
+    <tr>
+      <th>S</th>
+      <td>S -> a A b</td>
+      <td>S -> b A a</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>A</th>
+      <td>ε</td>
+      <td>ε</td>
+      <td>c S</td>
+      <td></td>
+    </tr>
+  </table>
+</div>
+
+Let's try to make sense of this table. For example, if we're currently expanding the non-terminal
+$S$ and we encounter a terminal $a$ in $s_i$, then our only choice is to apply $S \rightarrow aAb$,
+as it is the only production from $S$ that produces a leading $a$ character. Notice how the way
+in which the grammar is written makes this decision possible. At the same time,
+the parser also knows when to kill the current terminal with an $\epsilon$-rule. On the
+seventh iteration from this last example, it encounters an $a$ terminal on $s_i$ and
+a non-terminal $A$ on $s_t$. $A$ has no productions that create $a$, so the parser deduces
+that $A$ has nothing more to contribute and removes it via the $\epsilon$-rule.
+
+To get an even better understanding of this type of parser, I recommend that you run an example
+by yourself for an invalid string, such as $abba$.
+
+## Constructing the parsing table
+
+In this section, I'll explain the algorithm for generating parsing tables for $LL(1)$ grammars.
+After that, I'll provide you with an $LL(1)$ grammar for the JSON language, and then we're going
+to generate our parsing table.
+
+This part will again contain quite a bit of theory, so if you're not really in the mood for that
+right now, you can go to the next section - where we actually start writing some code - and
+come back here later, if you want. It's not mandatory, as to write the parser you only need
+the grammar and the parsing table, and I'll provide them to you at the beginning of the next section.
+
+## It's ~morbin'~ parsing time
