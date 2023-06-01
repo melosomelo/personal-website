@@ -1,0 +1,14 @@
+**LL(1) GRAMMAR FOR THE JSON LANGUAGE**
+
+Anything between angle brackets is a non-terminal. Everything else should 
+be considered a terminal. EPSILON represents the empty string. 
+
+<json_doc> -> <json_obj> | <array>
+<json_obj> -> { <kv_pairs> }
+<kv_pairs> -> <kv_pair> <remaining_kv_pairs> | EPSILON
+<kv_pair> -> STRING : <value>
+<remaining_kv_pairs> -> , <kv_pair> <remaining_kv_pairs> | EPSILON
+<value> -> NUMBER | STRING | BOOLEAN | NULL | <json_obj> | <array>
+<array> -> [ <value_list> ]
+<value_list> -> <value> <remaining_values> | EPSILON
+<remaining_values> -> , <value> <remaining_values> | EPSILON

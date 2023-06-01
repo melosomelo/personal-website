@@ -6,9 +6,9 @@ publishedAt: 2023-05-25T00:00:00-03:00
 categories: [math, computer-science, typescript]
 ---
 
-## A sprinkle of theory
+## A gentle introduction to formal linguistics
 
-The mathematical basis for parsing is the theory of **formal lingustics**. Its objects of study
+The mathematical basis for parsing is the theory of **formal linguistics**. Its objects of study
 are formal **languages** and **grammars**.
 
 As complex and subjective as natural languages can be, formal languages are treated merely as **sets of strings
@@ -309,3 +309,5 @@ come back here later, if you want. It's not mandatory, as to write the parser yo
 the grammar and the parsing table, and I'll provide them to you at the beginning of the next section.
 
 ## It's ~morbin'~ parsing time
+
+[eai](/misc/posts/json-parser-in-typescript/grammar.txt)
