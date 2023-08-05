@@ -533,6 +533,16 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.18.17.tgz#bcb2e042631b3c15792058e189ed879a22b2968b"
   integrity sha512-fGEb8f2BSA3CW7riJVurug65ACLuQAzKq0SSqkY2b2yHHH0MzDfbLyKIGzHwOI/gkHcxM/leuSW6D5w/LMNitA==
 
+"@fontsource/ia-writer-mono@^5.0.6":
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/@fontsource/ia-writer-mono/-/ia-writer-mono-5.0.6.tgz#7fa8cf6af492dd5cb709c7b5324e6f16fc4629d1"
+  integrity sha512-pcJ9vJdJNMReFSkS4WCRfIAyX5JGsrvp2E0pESLcbrfa8XsOmm/MNa/BF7rcJEPxBPPydoCTx2qQ5z2xP5voqg==
+
+"@fontsource/ia-writer-quattro@^5.0.6":
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/@fontsource/ia-writer-quattro/-/ia-writer-quattro-5.0.6.tgz#89a18efc17d6a34f6db235da7befb3333c326626"
+  integrity sha512-ZnQsRXkqTHFD+v0Me3kOsKS/6SaWk9A0/ipDSsv8S/C4F4hiF2mP6czGS0mRD1cC81hPPF/wxVqXW2/BPU82Aw==
+
 "@jridgewell/gen-mapping@^0.3.0", "@jridgewell/gen-mapping@^0.3.2":
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.3.3.tgz#7e02e6eb5df901aaedb08514203b096614024098"
