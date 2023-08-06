@@ -1,0 +1,48 @@
+---
+import "@fontsource/ia-writer-mono/400-italic.css";
+import "@fontsource/ia-writer-mono/700-italic.css";
+import "@fontsource/ia-writer-quattro/400.css";
+import "@fontsource/ia-writer-quattro/700.css";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+<style is:global>
+  :root {
+    --monospace-font: "iA Writer Mono", monospace;
+    --sans-serif-font: "iA Writer Quattro", sans-serif;
+    --purple: #971ffd;
+    --purple-rgb: 151, 31, 253;
+    --black: #201f1f;
+    --black-rgb: 32, 31, 31;
+    --dark-gray: #656565;
+    --dark-gray-rgb: 101, 101, 101;
+    --medium-gray: #aeaeae;
+    --medium-gray-rgb: 174, 174, 174;
+    --white: #f9f9f9;
+    --white-rgb: 249, 249, 249;
+  }
+
+  *,
+  *::after,
+  *::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    all: unset;
+  }
+
+  html {
+    font-size: 62.5%;
+  }
+</style>
