@@ -85,16 +85,32 @@
     width: 100vw;
     height: 0;
     overflow: hidden;
-    background: red;
+    background: var(--black);
     position: absolute;
     top: 100%;
     left: -5vw;
 
+    padding: 0 5%;
+
     transition: all 0.5s ease-out;
+
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--dark-gray);
+
+    display: flex;
+    flex-direction: column;
   }
 
   #mobile-nav.open {
     height: 100vh;
+  }
+
+  #mobile-nav > * {
+    padding: 4rem 0;
+  }
+  #mobile-nav > * + * {
+    border-top: 2px solid var(--dark-gray);
   }
 
   #desktop-nav {
@@ -131,14 +147,24 @@
     <a href="#projects">projects</a>
     <button type="button">contact</button>
   </nav>
-  <nav id="mobile-nav"></nav>
+  <nav id="mobile-nav">
+    <a href="#articles">blog</a>
+    <a href="#projects">projects</a>
+    <button type="button">contact</button>
+  </nav>
 </header>
 <script>
-  document.getElementById("menu-icon")!.addEventListener("click", () => {
+  function toggleMobileNav() {
     const mobileNav = document.getElementById("mobile-nav")!;
     const menuIcon = document.getElementById("menu-icon");
     mobileNav.classList.toggle("open");
     document.body.classList.toggle("no-scroll");
     menuIcon?.classList.toggle("open");
-  });
+  }
+  document
+    .getElementById("menu-icon")!
+    .addEventListener("click", toggleMobileNav);
+  Array.from(document.querySelectorAll("#mobile-nav *")).forEach((el) =>
+    el.addEventListener("click", toggleMobileNav)
+  );
 </script>
