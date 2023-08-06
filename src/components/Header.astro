@@ -1,0 +1,144 @@
+<style>
+  header {
+    width: 90%;
+    margin: 0 auto;
+    padding: 3.2rem 0;
+    max-width: 900px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    color: var(--gray);
+    font-family: var(--monospace-font);
+
+    position: relative;
+  }
+
+  header a.active {
+    font-weight: bold;
+    color: var(--purple);
+  }
+
+  button {
+    all: unset;
+  }
+
+  #logo {
+    font-size: 2.5rem;
+  }
+
+  #menu-icon {
+    width: 26px;
+    height: 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    overflow: hidden;
+
+    position: relative;
+  }
+
+  #menu-icon > * {
+    height: 2px;
+    background: white;
+    transition: 0.3s ease-out;
+
+    position: absolute;
+  }
+
+  #menu-icon > :first-child {
+    width: 100%;
+    top: 0%;
+  }
+
+  #menu-icon > :nth-child(2) {
+    width: 70%;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+
+  #menu-icon > :nth-child(3) {
+    width: 40%;
+    bottom: 0;
+  }
+
+  #menu-icon.open > :first-child {
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  #menu-icon.open > :nth-child(2) {
+    transform: translate(100%, -50%);
+  }
+
+  #menu-icon.open > :nth-child(3) {
+    width: 100%;
+    bottom: 50%;
+    transform: translateY(50%) rotate(-45deg);
+  }
+
+  #mobile-nav {
+    width: 100vw;
+    height: 0;
+    overflow: hidden;
+    background: red;
+    position: absolute;
+    top: 100%;
+    left: -5vw;
+
+    transition: all 0.5s ease-out;
+  }
+
+  #mobile-nav.open {
+    height: 100vh;
+  }
+
+  #desktop-nav {
+    font-size: 1.6rem;
+    display: none;
+  }
+
+  #desktop-nav > * + * {
+    margin-left: 3.6rem;
+  }
+
+  @media screen and (min-width: 600px) {
+    #menu-icon,
+    #mobile-nav {
+      display: none;
+    }
+
+    #desktop-nav {
+      display: initial;
+    }
+  }
+</style>
+<header>
+  <a href="/" id="logo" class:list={{ active: Astro.url.pathname === "/" }}
+    >~/mateusm</a
+  >
+  <button id="menu-icon">
+    <div></div>
+    <div></div>
+    <div></div>
+  </button>
+  <nav id="desktop-nav">
+    <a href="#articles">blog</a>
+    <a href="#projects">projects</a>
+    <button type="button">contact</button>
+  </nav>
+  <nav id="mobile-nav"></nav>
+</header>
+<script>
+  document.getElementById("menu-icon")!.addEventListener("click", () => {
+    const mobileNav = document.getElementById("mobile-nav")!;
+    const menuIcon = document.getElementById("menu-icon");
+    mobileNav.classList.toggle("open");
+    document.body.classList.toggle("no-scroll");
+    menuIcon?.classList.toggle("open");
+  });
+</script>

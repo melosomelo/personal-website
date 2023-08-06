@@ -1,22 +1,11 @@
 ---
-import "@fontsource/ia-writer-mono/400-italic.css";
-import "@fontsource/ia-writer-mono/700-italic.css";
+import "@fontsource/ia-writer-mono/400.css";
+import "@fontsource/ia-writer-mono/700.css";
 import "@fontsource/ia-writer-quattro/400.css";
 import "@fontsource/ia-writer-quattro/700.css";
+import Header from "../components/Header.astro";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
-  </head>
-  <body>
-    <slot />
-  </body>
-</html>
 <style is:global>
   :root {
     --monospace-font: "iA Writer Mono", monospace;
@@ -29,6 +18,8 @@ import "@fontsource/ia-writer-quattro/700.css";
     --dark-gray-rgb: 101, 101, 101;
     --medium-gray: #aeaeae;
     --medium-gray-rgb: 174, 174, 174;
+    --gray: #e6e6e6;
+    --gray-rgb: 230, 230, 230;
     --white: #f9f9f9;
     --white-rgb: 249, 249, 249;
   }
@@ -39,10 +30,39 @@ import "@fontsource/ia-writer-quattro/700.css";
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    all: unset;
   }
 
   html {
     font-size: 62.5%;
   }
+
+  body {
+    font-family: var(--sans-serif-font);
+    color: var(--white);
+    background: var(--black);
+    min-height: 100vh;
+    scroll-behavior: smooth;
+  }
+
+  body.no-scroll {
+    overflow: hidden;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 </style>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+  </head>
+  <body>
+    <Header />
+    <slot />
+  </body>
+</html>
