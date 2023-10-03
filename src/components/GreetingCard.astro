@@ -2,7 +2,7 @@
 ---
 
 <style>
-  article {
+  .greeting-card {
     background-color: rgba(21, 21, 21, 0.3);
     padding: 2.4rem;
     width: 100%;
@@ -14,7 +14,7 @@
 
   p {
     color: var(--medium-gray);
-    font-size: 1.9rem;
+    font-size: 1.7rem;
     line-height: 140%; /* 26.6px */
     letter-spacing: -0.19px;
   }
@@ -33,14 +33,58 @@
   .mobile-content h2 {
     font-size: 1.9rem;
   }
+
+  .desktop-content {
+    display: none;
+  }
+
+  @media screen and (min-width: 600px) {
+    .greeting-card {
+      width: 90%;
+      margin: 0 auto;
+      max-width: 900px;
+    }
+
+    p {
+      font-size: 1.9rem;
+    }
+
+    .mobile-content h2 {
+      font-size: 2.4rem;
+    }
+  }
+
+  @media screen and (min-width: 800px) {
+    .greeting-card {
+      padding: 4rem 7rem;
+    }
+    .mobile-content {
+      display: none;
+    }
+    .desktop-content {
+      display: flex;
+      align-items: center;
+    }
+
+    .desktop-content img {
+      width: 170px;
+      height: 170px;
+      margin-right: 4.8rem;
+    }
+
+    .desktop-content h2 {
+      font-size: 2.4rem;
+      margin-bottom: 2.4rem;
+    }
+  }
 </style>
-<article>
+<article class="greeting-card">
   <div class="mobile-content">
     <header>
       <img
-        src="/mateus-small.png"
-        width="200"
-        height="200"
+        src="/mateus.png"
+        width="300"
+        height="300"
         alt="An illustration of Mateus, in a purple background with a cyberpunk pair of glasses"
       />
       <h2>Hi, I'm Mateus Nascimento!</h2>
@@ -52,5 +96,21 @@
       that I find fascinating.
     </p>
   </div>
-  <div class="desktop-content"></div>
+  <div class="desktop-content">
+    <img
+      src="/mateus.png"
+      width="300"
+      height="300"
+      alt="An illustration of Mateus, in a purple background with a cyberpunk pair of glasses"
+    />
+    <div>
+      <h2>Hi, I'm Mateus Nascimento!</h2>
+      <p>
+        I'm 23 years old, currently working @ibm as a back-end developer and I'm
+        almost finishing my Bachelor's in Computer Science. I'm a learnaholic by
+        design, and I love to write about the things I'm currently studying
+        and/or that I find fascinating.
+      </p>
+    </div>
+  </div>
 </article>
