@@ -154,13 +154,7 @@
   </nav>
 </header>
 <script>
-  function toggleMobileNav() {
-    const mobileNav = document.getElementById("mobile-nav")!;
-    const menuIcon = document.getElementById("menu-icon");
-    mobileNav.classList.toggle("open");
-    document.body.classList.toggle("no-scroll");
-    menuIcon?.classList.toggle("open");
-  }
+  import toggleMobileNav from "../functions/toggleMobileNav";
   document
     .getElementById("menu-icon")!
     .addEventListener("click", toggleMobileNav);
